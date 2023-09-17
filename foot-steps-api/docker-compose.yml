@@ -1,0 +1,60 @@
+version: "3.4"
+services:
+  php:
+    container_name: ${APP_NAME}-php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: test
+    volumes:
+      - .:/app
+    depends_on:
+      - mysql
+      - redis_cluster
+    working_dir: /app
+    environment:
+      APP_ENV: local
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
+      CONTAINER_ROLE: app
+    networks:
+      - default
+
+  nginx:
+    container_name: ${APP_NAME}-nginx
+    depends_on:
+      - php
+    image: nginx:alpine
+    tty: true
+    ports:
+      - ${DOCKER_NGINX_EXTERNAL_PORT}:80
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - default
+
+  mysql:
+    container_name: ${APP_NAME}-mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+    ports:
+      - '${DOCKER_MYSQL_EXTERNAL_PORT}:3306'
+    command: mysqld --sql_mode=""
+    networks:
+      - default
+
+  redis_cluster:
+    container_name: ${APP_NAME}-redis-cluster
+    image: grokzen/redis-cluster:latest
+    ports:
+      - "7000-7005"
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge

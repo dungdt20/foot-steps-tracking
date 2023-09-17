@@ -1,0 +1,296 @@
+openapi: 3.0.0
+info:
+  title: 'Foot step service documentation'
+  termsOfService: 'http://swagger.io/terms/'
+  version: 1.0
+servers:
+  - url: 'http://localhost:9084'
+    description: 'Localhost'
+
+paths:
+  ### STATUS ###
+  /status:
+    get:
+      tags:
+        - status
+      summary: 'API health check'
+      description: 'Health check service'
+      responses:
+        200:
+          $ref: '#/components/responses/StatusCheckSuccess'
+        500:
+          $ref: '#/components/responses/StatusCheckFailed'
+
+  ### UPDATE FOOT STEPS ###
+  /api/v1/footsteps/me/update:
+    post:
+      tags:
+        - v1
+      summary: 'API update footstep'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                user_id:
+                  required: true
+                  type: integer
+                add_foot_steps:
+                  required: true
+                  type: integer
+      responses:
+        200:
+          $ref: '#/components/responses/UpdateFootStepsSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+
+  ### UPDATE FOOT STEPS ###
+  /api/v1/footsteps/me/weekly:
+    get:
+      tags:
+        - v1
+      summary: 'API get footstep weekly'
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: number
+          required: true
+          description: 'User id'
+        - in: query
+          name: value_date
+          schema:
+            type: string
+          required: false
+          description: 'YYYY-mm-dd'
+      responses:
+        200:
+          $ref: '#/components/responses/FootStepsWeeklySuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+
+  ### UPDATE FOOT STEPS ###
+  /api/v1/footsteps/me/monthly:
+    get:
+      tags:
+        - v1
+      summary: 'API get footstep monthly'
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: number
+          required: true
+          description: 'User id'
+        - in: query
+          name: value_month
+          schema:
+            type: string
+          required: false
+          description: 'YYYY-mm'
+      responses:
+        200:
+          $ref: '#/components/responses/FootStepsMonthlySuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+
+  ### UPDATE FOOT STEPS ###
+  /api/v1/footsteps/daily/top-rank:
+    get:
+      tags:
+        - v1
+      summary: 'API get footstep top rank daily'
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: number
+          required: true
+          description: 'User id'
+        - in: query
+          name: value_date
+          schema:
+            type: string
+          required: true
+          description: 'YYYY-mm-dd'
+      responses:
+        200:
+          $ref: '#/components/responses/FootStepsDailyTopRankSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  responses:
+    StatusCheckSuccess:
+      description: 'Health check success'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatusCheckSuccessResponse'
+    StatusCheckFailed:
+      description: 'Health check success'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatusCheckFailedResponse'
+    UpdateFootStepsSuccess:
+      description: 'Update foot steps success'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFootStepsSuccessResponse'
+    FootStepsWeeklySuccess:
+      description: 'Get foot steps success'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FootStepsWeeklySuccessResponse'
+    FootStepsMonthlySuccess:
+      description: 'Get foot steps success'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FootStepsMonthlySuccessResponse'
+    FootStepsDailyTopRankSuccess:
+      description: 'Get foot steps success'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FootStepsDailyTopRankSuccessResponse'
+    BadRequest:
+      description: 'Bad request'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestResponse'
+
+  schemas:
+    StatusCheckSuccessResponse:
+      properties:
+        status:
+          default: 'ok'
+          description: 'Status of service'
+          type: string
+        message:
+          default: ''
+          description: 'Message of health check'
+        version:
+          default: '1.0.3'
+          description: 'Current version of service'
+    StatusCheckFailedResponse:
+      properties:
+        status:
+          default: 'failed'
+          description: 'Status of service'
+          type: string
+        message:
+          default: 'DB is down'
+          description: 'Error message'
+        version:
+          default: '1.0.3'
+          description: 'Current version of service'
+    UpdateFootStepsSuccessResponse:
+      properties:
+        success:
+          default: true
+          description: 'Status'
+          type: boolean
+        message:
+          default: 'Success'
+          description: 'Message'
+          type: string
+        data:
+          type: array
+    FootStepsWeeklySuccessResponse:
+      properties:
+        success:
+          default: true
+          description: 'Status'
+          type: boolean
+        message:
+          default: 'Success'
+          description: 'Message'
+          type: string
+        data:
+          type: object
+          properties:
+            user_id:
+              type: number
+            start_of_week:
+              type: string
+            end_of_week:
+              type: string
+            steps:
+              type: number
+    FootStepsMonthlySuccessResponse:
+      properties:
+        success:
+          default: true
+          description: 'Status'
+          type: boolean
+        message:
+          default: 'Success'
+          description: 'Message'
+          type: string
+        data:
+          type: object
+          properties:
+            user_id:
+              type: number
+            value_month:
+              type: string
+            steps:
+              type: number
+    FootStepsDailyTopRankSuccessResponse:
+      properties:
+        success:
+          default: true
+          description: 'Status'
+          type: boolean
+        message:
+          default: 'Success'
+          description: 'Message'
+          type: string
+        data:
+          type: object
+          properties:
+            value_date:
+              type: string
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                  name:
+                    type: string
+                  steps:
+                    type: string
+    BadRequestResponse:
+      properties:
+        success:
+          default: false
+          type: string
+        message:
+          default: 'Error message'
+          description: 'Error message'
+          type: string
+        errors:
+          properties:
+            field:
+              type: array
+              items:
+                type: string
+              default: [ 'Error message' ]
+### TAGS ###
+tags:
+  -
+    name: v1
+    description: 'API v1'
+
+
+externalDocs:
+  description: 'Find out more about Swagger'
+  url: 'http://swagger.io'
