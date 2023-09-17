@@ -13,14 +13,14 @@ I came up with 2 system designs and choice the second one to implement because o
 
 #### 2. The second one I update footsteps directly with transaction
 - I send update request by `total footsteps of date` each 5 - 15 minutes, so if we get error with some request, next request still update correct data
-- I think this is footsteps, not money. So it's fine if we miss some request but then eventually consistent afterward
+- I think this is footsteps, not money transaction. So it's fine if we miss some request but then eventually consistent afterward
 - Easily to implement but still done the work
 
 ![Second System Design](./diagram/Second_System_Design.png "Second System Design")
 
 ### Database
 
-- I use `foot_steps_daily` as a trust source. If there is some inconsistent with steps in other `foot_steps` table, we with need to sync data from `foot_steps_daily`
+- I use `foot_steps_daily` as a trust source. If there are some inconsistent with steps in other `foot_steps` table, we with need to sync data from `foot_steps_daily`
 
 ![Database Design](./diagram/Database_Design.png "Database Design")
 
@@ -66,8 +66,7 @@ I came up with 2 system designs and choice the second one to implement because o
         + If not found `(user_id, value_month(from value_date))` in `foot_steps_monthly` table
           + Insert new row with `added_steps`
         + Else
-          + Update that row with `oldRow.steps` + `added_steps`  
-<br>
+          + Update that row with `oldRow.steps` + `added_steps`
 #### 2. API get daily top rank to view on application.
    - Url: api/v1/footsteps/daily/top-rank
    - Method: GET
@@ -108,8 +107,7 @@ I came up with 2 system designs and choice the second one to implement because o
          + check `where` `value_date` column equal `date` input
          + get `order by steps` and get `limit`
        + Update data from `MySQL` to `Redis cache` with `Time_to_live` = 15 minutes
-       + Return top rank to response  
-<br>
+       + Return top rank to response
 #### 3. API get current weekly footsteps to view on application.
    - Url: api/v1/footsteps/me/weekly
    - Method: GET
@@ -135,8 +133,7 @@ I came up with 2 system designs and choice the second one to implement because o
        + Get `value_date`, if `value_date` empty get `current_date`
        + Get `start_of_week` and `end_of_week` from `date`
        + `sum(steps)` all row between `start_of_week` and `end_of_week`
-       + return `sum(steps)`  
-<br>
+       + return `sum(steps)`
 #### 4. API get current monthly footsteps to view on application.
    - Url: api/v1/footsteps/me/monthly
    - Method: GET
