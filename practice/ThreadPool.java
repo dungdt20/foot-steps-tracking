@@ -50,6 +50,7 @@ class Task implements Runnable {
         }
     }
 }
+
 public class ThreadPool {
     // Maximum number of threads in thread pool
     static final int MAX_THREAD = 3;
@@ -71,10 +72,6 @@ public class ThreadPool {
 
         // pool shutdown ( Step 4)
         pool.shutdown();
-    }
-
-    private static int genRandom(int min, int max) {
-        return (int) Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     private static List<Event> initEvents() {
@@ -103,5 +100,9 @@ public class ThreadPool {
         }
 
         return new ArrayList<>(map.values());
+    }
+
+    private static int genRandom(int min, int max) {
+        return (int) Math.floor(Math.random() * (max - min + 1) + min);
     }
 }
